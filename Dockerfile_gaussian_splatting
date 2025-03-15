@@ -1,0 +1,42 @@
+# This is the base Dockerfile for running Pytorch with CUDA support in NVIDIA A100 GPUs
+
+# Use the base image with PyTorch and CUDA support
+# A100 has Compute Capability 8.0, CUDA 11.8
+FROM pytorch/pytorch:2.6.0-cuda11.8-cudnn9-devel
+
+# make apt packages installed without user interaction
+ENV DEBIAN_FRONTEND=noninteractive
+# set CUDA environment variable
+ENV TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
+
+# Update and install tzdata separately
+RUN apt update && apt install -y tzdata
+
+# Install necessary packages
+RUN apt install -y git wget curl vim zip
+
+# Install packages are used for buliding SIBR_viewers locally
+# RUN apt install -y libglew-dev libassimp-dev libboost-all-dev libgtk-3-dev libopencv-dev libglfw3-dev libavdevice-dev libavcodec-dev libeigen3-dev libxxf86vm-dev libembree-dev
+
+# Create a workspace directory and clone the repository
+WORKDIR /workspace
+RUN git clone https://github.com/graphdeco-inria/gaussian-splatting --recursive
+
+# Create a Conda environment and activate it
+WORKDIR /workspace/gaussian-splatting
+RUN conda create -y -n gaussian_splatting python=3.7
+RUN conda init bash && exec bash && conda activate gaussian_splatting
+RUN conda env update --file environment.yml --prune
+
+# install colmap
+WORKDIR /workspace
+RUN apt install -y cmake ninja-build build-essential libboost-program-options-dev libboost-graph-dev libboost-system-dev \
+    libeigen3-dev libflann-dev libfreeimage-dev libmetis-dev libgoogle-glog-dev libgtest-dev libgmock-dev \
+    libsqlite3-dev libglew-dev qtbase5-dev libqt5opengl5-dev libcgal-dev libceres-dev
+RUN git clone https://github.com/colmap/colmap.git && cd colmap && mkdir build && cd build && cmake .. -GNinja && ninja && ninja install
+
+# Fix nameserver
+RUN echo 'echo "nameserver 8.8.8.8" > /etc/resolv.conf' >> ~/.bashrc
+
+# Clean up
+RUN apt clean && rm -rf /var/lib/apt/lists/*
