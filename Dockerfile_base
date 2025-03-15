@@ -1,0 +1,22 @@
+# This is the base Dockerfile for running Pytorch with CUDA support in NVIDIA A100 GPUs
+
+# Use the base image with PyTorch and CUDA support
+# A100 has Compute Capability 8.0, CUDA 11.8
+FROM pytorch/pytorch:2.6.0-cuda11.8-cudnn9-devel
+
+# make apt packages installed without user interaction
+ENV DEBIAN_FRONTEND=noninteractive
+# set CUDA environment variable
+ENV TORCH_CUDA_ARCH_LIST="3.5;5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
+
+# Update and install tzdata separately
+RUN apt update && apt install -y tzdata
+
+# Install necessary packages
+RUN apt install -y git wget curl vim zip
+
+# Fix nameserver
+RUN echo 'echo "nameserver 8.8.8.8" > /etc/resolv.conf' >> ~/.bashrc
+
+# Clean up
+RUN apt clean && rm -rf /var/lib/apt/lists/*
