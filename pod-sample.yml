@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sample-pod
+  labels:
+    name: sample
+spec:
+  volumes:
+  - name: sample-persistent-volume
+    persistentVolumeClaim:
+      claimName: sample-persistent-volume-claim
+  containers:
+  - name: sample-container
+    image: sgs-registry.snucse.org/ws-rzq8iwdacwjd0/sample:1.0
+    command: ['/bin/bash', '-c', 'sleep inf']
+    resources:
+        limits:
+          nvidia.com/gpu: 1
+    volumeMounts:
+    - name: sample-persistent-volume
+      mountPath: /workspace/mount
