@@ -28,8 +28,28 @@ RUN conda create -y -n Gaussians4D python=3.7 && conda init
 SHELL ["conda", "run", "-n", "Gaussians4D", "/bin/bash", "-c"]
 RUN pip install -r requirements.txt && pip install -e submodules/depth-diff-gaussian-rasterization && pip install -e submodules/simple-knn
 
+# install colmap
+WORKDIR /workspace
+RUN apt install -y cmake ninja-build build-essential libboost-program-options-dev libboost-graph-dev libboost-system-dev \
+    libeigen3-dev libflann-dev libfreeimage-dev libmetis-dev libgoogle-glog-dev libgtest-dev libgmock-dev \
+    libsqlite3-dev libglew-dev qtbase5-dev libqt5opengl5-dev libcgal-dev libceres-dev
+RUN git clone https://github.com/colmap/colmap.git && cd colmap && mkdir build && cd build && cmake .. -GNinja && ninja && ninja install
+
 # Fix nameserver
 RUN echo 'echo "nameserver 8.8.8.8" > /etc/resolv.conf' >> ~/.bashrc
 
 # Clean up
 RUN apt clean && rm -rf /var/lib/apt/lists/*
+
+### Scripts
+
+## Port-forwarding to kubernetes pod
+# kubectl port-forward sample-pod 6017:6017
+
+## Training Synthetic Scene - bouncingballs 
+# python3 train.py -s ../mount/4dgaussian/dnerf/bouncingballs --port 6017 --expname "dnerf/bouncingballs" --configs arguments/dnerf/bouncingballs.py
+
+## training hypernerf scenes
+# bash colmap.sh ../mount/4dgaussian/hypernerf/interp/aleks-teapot hypernerf
+# python3 scripts/downsample_point.py ../mount/4dgaussian/hypernerf/interp/aleks-teapot/colmap/dense/workspace/fused.ply ../mount/4dgaussian/hypernerf/interp/aleks-teapot/points3D_downsample2.ply
+# python3 train.py -s ../mount/4dgaussian/hypernerf/interp/aleks-teapot --port 6017 --expname "hypernerf/interp/aleks-teapot" --configs arguments/hypernerf/default.py 
