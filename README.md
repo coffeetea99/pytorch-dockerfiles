@@ -18,8 +18,8 @@ docker run -it --rm $LOCAL_IMAGE:$LOCAL_TAG /bin/bash
 ### 도커 푸시
 ```sh
 docker login sgs-registry.snucse.org -u coffeetea99 -p $SGS_SECRET
-docker tag $LOCAL_IMAGE:$LOCAL_TAG sgs-registry.snucse.org/ws-rzq8iwdacwjd0/$REMOTE_IMAGE:$REMOTE_TAG
-docker push sgs-registry.snucse.org/ws-rzq8iwdacwjd0/$REMOTE_IMAGE:$REMOTE_TAG
+docker tag base sgs-registry.snucse.org/ws-rzq8iwdacwjd0/base
+docker push sgs-registry.snucse.org/ws-rzq8iwdacwjd0/base
 ```
 
 ### 쿠버네이트 파드 만들기
@@ -29,6 +29,11 @@ kubectl apply -f pod-sample.yml
 또는  
 ```sh
 kubectl run --rm -it --image sgs-registry.snucse.org/ws-rzq8iwdacwjd0/some/$REMOTE_IMAGE:$REMOTE_TAG temp-pod -- /bin/bash
+```
+
+### 쿠버네티스 상태 확인
+```sh
+kubectl describe pod
 ```
 
 ### 쿠버네티스 파드 접속

@@ -18,5 +18,8 @@ RUN apt install -y git wget curl vim zip
 # Fix nameserver
 RUN echo 'echo "nameserver 8.8.8.8" > /etc/resolv.conf' >> ~/.bashrc
 
+# Create a workspace directory
+WORKDIR /workspace
+
 # Clean up
 RUN apt clean && rm -rf /var/lib/apt/lists/*

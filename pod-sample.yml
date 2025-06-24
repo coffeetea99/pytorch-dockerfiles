@@ -5,13 +5,15 @@ metadata:
   labels:
     name: sample
 spec:
+  nodeSelector:
+    kubernetes.io/hostname: ford
   volumes:
   - name: sample-persistent-volume
     persistentVolumeClaim:
       claimName: sample-persistent-volume-claim
   containers:
   - name: sample-container
-    image: sgs-registry.snucse.org/ws-rzq8iwdacwjd0/sample:1.0
+    image: sgs-registry.snucse.org/ws-rzq8iwdacwjd0/base
     command: ['/bin/bash', '-c', 'sleep inf']
     resources:
         limits:
