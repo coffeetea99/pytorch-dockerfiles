@@ -2,12 +2,16 @@
 
 ### 도커 시작
 ```sh
-sudo systemctl start docker
+systemctl start docker
 ```
 
 ### 도커 빌드
 ```sh
-sudo docker build --tag $LOCAL_IMAGE:$LOCAL_TAG -f $DOCKERFILE_NAME .
+docker build --tag $LOCAL_IMAGE:$LOCAL_TAG -f $DOCKERFILE_NAME .
+```
+예시
+```sh
+docker build --tag sgs-registry.snucse.org/ws-rzq8iwdacwjd0/base -f Dockerfile_base .
 ```
 
 ### 도커 로컬에서 돌려보기

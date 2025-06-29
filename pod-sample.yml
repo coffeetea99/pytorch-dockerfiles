@@ -26,3 +26,5 @@ spec:
       value: /workspace/mount/conda_pkgs
     - name: CONDA_ENVS_DIRS
       value: /workspace/mount/conda_env
+    - name: PIP_CACHE_DIR
+      value: workspace/mount/pip_cache
