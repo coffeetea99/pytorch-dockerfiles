@@ -49,6 +49,14 @@ sort |\
 uniq -c
 ```
 
+### PVC 남은 용량 확인
+```sh
+# pod 안에서 확인할 때
+df -h
+# pod 밖에서 확인할 때
+kubectl exec sample-pod -- df -h
+```
+
 ### SFTP로 폴더 옮기기
 ```sh
 sftp coffeetea99@martini.snucse.org

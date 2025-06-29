@@ -21,3 +21,8 @@ spec:
     volumeMounts:
     - name: sample-persistent-volume
       mountPath: /workspace/mount
+    env:
+    - name: CONDA_PKGS_DIRS
+      value: /workspace/mount/conda_pkgs
+    - name: CONDA_ENVS_DIRS
+      value: /workspace/mount/conda_env
